@@ -2,9 +2,9 @@ version: "3.9"
 
 services:
   nginx:
-    build: ./nginx
+    build: ./nginx.dev
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/conf.d
+      - static:/static
     ports:
       - "8080:80"
   frontend:
@@ -19,5 +19,9 @@ services:
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/backend
+      - static:/backend/static
     ports:
       - "8000:8000"
+
+volumes:
+  static:
