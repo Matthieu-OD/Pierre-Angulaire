@@ -1,7 +1,12 @@
 version: "3.9"
 
 services:
-  # nginx: to be in prod mode like
+  nginx:
+    build: ./nginx
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d
+    ports:
+      - "8080:80"
   frontend:
     build: ./frontend
     command: npm start
