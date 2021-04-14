@@ -41,14 +41,13 @@ services:
 
   backend:
     build: ./backend
-    command: python manage.py runserver 0.0.0.0:8000
     volumes:
       - ./backend:/usr/src/backend
     ports:
       - "8000:8000"
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.backend.rule=Host(`dev.local`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.rule=Host(`dev.localhost`) && PathPrefix(`/api`)"
       - "traefik.http.routers.backend.entrypoints=websecure"
       - "traefik.http.routers.backend.tls=true"
       - "traefik.http.services.backend.loadbalancer.server.port=8000"

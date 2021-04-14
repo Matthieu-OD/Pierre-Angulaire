@@ -13,3 +13,8 @@ RUN pip install pipenv && \
     pip uninstall pipenv -y
 
 COPY . .
+
+RUN python manage.py makemigrations && \
+    python manage.py migrate
+    
+CMD []

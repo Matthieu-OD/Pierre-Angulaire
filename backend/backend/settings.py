@@ -25,8 +25,17 @@ SECRET_KEY = 'django-insecure-fm65z)24j-vzwv)kx7dn--47q8%2&6=9ob+qkdwk+u58l)cqlb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    '127.0.0.1:8000',
+    'localhost:8000',
+    'dev.localhost'
+]
 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',
+    'https://dev.localhost',
+    'https://dev.localhost'
+]
 
 # Application definition
 
@@ -37,7 +46,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'corsheaders'
+    'rest_framework',
+    'accounts',
+    'trello'
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
