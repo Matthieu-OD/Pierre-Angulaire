@@ -1,27 +1,54 @@
 version: "3.9"
 
 services:
-  nginx:
-    build: ./nginx.dev
-    volumes:
-      - static:/static
+  reverse-proxy:
+    image: "traefik:v2.4"
+    healthcheck:
+      test:
+        - CMD
+        - traefik
+        - heathcheck
+      interval: 10s
+      timeout: 5s
+      retries: 3
     ports:
       - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - ./traefik.dev.yaml:/etc/traefik/traefik.yaml
+      - ./certs.dev:/certs/
+      - /var/run/docker.sock:/var/run/docker.sock
+
   frontend:
     build: ./frontend
     command: npm start
     volumes:
-      - ./frontend:/frontend
+      - ./frontend:/usr/src/frontend
+      - /usr/src/frontend/node_modules
     ports:
       - "3000:3000"
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.frontend.rule=Host(`dev.localhost`)"
+      - "traefik.http.routers.frontend.entrypoints=websecure"
+      - "traefik.http.routers.frontend.tls=true"
+      - "traefik.http.services.frontend.loadbalancer.server.port=3000"
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    depends_on:
+      - reverse-proxy
+
   backend:
     build: ./backend
     command: python manage.py runserver 0.0.0.0:8000
     volumes:
-      - ./backend:/backend
-      - static:/backend/static
+      - ./backend:/usr/src/backend
     ports:
       - "8000:8000"
-
-volumes:
-  static:
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.backend.rule=Host(`dev.local`) && PathPrefix(`/api`)"
+      - "traefik.http.routers.backend.entrypoints=websecure"
+      - "traefik.http.routers.backend.tls=true"
+      - "traefik.http.services.backend.loadbalancer.server.port=8000"
