@@ -14,7 +14,6 @@ RUN pip install pipenv && \
 
 COPY . .
 
-RUN python manage.py makemigrations && \
-    python manage.py migrate
+RUN chmod +x entrypoint.dev.sh
     
-CMD []
+CMD ["sh", "-c", "./entrypoint.dev.sh"]
